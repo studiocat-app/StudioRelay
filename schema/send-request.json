@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SendRequest",
+  "description": "`POST /v1/device/send`",
+  "type": "object",
+  "properties": {
+    "epoch": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "frames": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Frame"
+      }
+    }
+  },
+  "required": [
+    "epoch",
+    "frames"
+  ],
+  "$defs": {
+    "Frame": {
+      "description": "A frame sent by the Mac.",
+      "oneOf": [
+        {
+          "description": "Response status and headers (HTTP streams only).",
+          "type": "object",
+          "properties": {
+            "headers": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "status": {
+              "type": "integer",
+              "format": "uint16",
+              "maximum": 65535,
+              "minimum": 0
+            },
+            "streamId": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            },
+            "type": {
+              "type": "string",
+              "const": "http.head"
+            }
+          },
+          "required": [
+            "type",
+            "streamId",
+            "status",
+            "headers"
+          ]
+        },
+        {
+          "description": "Response body bytes or TLS bytes, base64. The relay drops bytes it has\nalready received at the same offset, so a retried send is harmless.",
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "string"
+            },
+            "offset": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0
+            },
+            "streamId": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            },
+            "type": {
+              "type": "string",
+              "const": "data"
+            }
+          },
+          "required": [
+            "type",
+            "streamId",
+            "offset",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "streamId": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            },
+            "type": {
+              "type": "string",
+              "const": "end"
+            }
+          },
+          "required": [
+            "type",
+            "streamId"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "code": {
+              "$ref": "#/$defs/ResetCode"
+            },
+            "streamId": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            },
+            "type": {
+              "type": "string",
+              "const": "reset"
+            }
+          },
+          "required": [
+            "type",
+            "streamId",
+            "code"
+          ]
+        },
+        {
+          "description": "Hosted mode: publish an ACME DNS-01 challenge for this device's name.",
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "const": "acme.txt"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "name",
+            "value"
+          ]
+        }
+      ]
+    },
+    "ResetCode": {
+      "type": "string",
+      "enum": [
+        "client_gone",
+        "deadline_exceeded",
+        "too_large",
+        "refused",
+        "internal"
+      ]
+    }
+  }
+}

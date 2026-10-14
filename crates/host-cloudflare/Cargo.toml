@@ -1,0 +1,18 @@
+[package]
+name = "host-cloudflare"
+description = "StudioRelay Cloudflare host for self-hosting (Workers + Durable Objects)."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+relay-core = { path = "../relay-core" }
+relay-protocol = { path = "../relay-protocol" }

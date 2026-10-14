@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RegisterRequest",
+  "description": "`POST /v1/device/register`",
+  "type": "object",
+  "properties": {
+    "deviceName": {
+      "description": "Shown in the relay's device list; never used for routing.",
+      "type": "string"
+    },
+    "proof": {
+      "$ref": "#/$defs/Proof"
+    }
+  },
+  "required": [
+    "proof",
+    "deviceName"
+  ],
+  "$defs": {
+    "Proof": {
+      "description": "Proof presented once, at registration.",
+      "oneOf": [
+        {
+          "description": "One-time enrollment token set when the relay was deployed (self-hosted).",
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "enroll"
+            },
+            "token": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "token"
+          ]
+        },
+        {
+          "description": "A StudioCat license that includes `relay.hosted` (hosted).",
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "license"
+            },
+            "token": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "token"
+          ]
+        }
+      ]
+    }
+  }
+}

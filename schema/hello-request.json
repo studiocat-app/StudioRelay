@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HelloRequest",
+  "description": "`POST /v1/device/hello` — opens a new epoch; the previous one ends.",
+  "type": "object",
+  "properties": {
+    "clientVersion": {
+      "type": "string"
+    },
+    "modes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Mode"
+      }
+    },
+    "protocol": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "protocol",
+    "clientVersion",
+    "modes"
+  ],
+  "$defs": {
+    "Mode": {
+      "description": "How a stream reaches the Mac.",
+      "oneOf": [
+        {
+          "description": "The relay ended TLS and forwards HTTP exchanges.",
+          "type": "string",
+          "const": "http"
+        },
+        {
+          "description": "The relay forwards TLS bytes; the Mac ends TLS.",
+          "type": "string",
+          "const": "tcp"
+        }
+      ]
+    }
+  }
+}

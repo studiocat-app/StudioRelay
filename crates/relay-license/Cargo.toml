@@ -1,0 +1,17 @@
+[package]
+name = "relay-license"
+description = "Verifies StudioCat licenses (Ed25519, offline) for the hosted relay."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+base64 = "0.22"
+ed25519-dalek = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"

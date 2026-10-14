@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HelloResponse",
+  "type": "object",
+  "properties": {
+    "address": {
+      "description": "The public MCP address of this device, for example\n`https://<id>.d.relay.studiocat.app/mcp`. The Mac uses it as the OAuth\n`resource` and never trusts a request's `Host` header instead.",
+      "type": "string"
+    },
+    "epoch": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "limits": {
+      "$ref": "#/$defs/Limits"
+    }
+  },
+  "required": [
+    "epoch",
+    "address",
+    "limits"
+  ],
+  "$defs": {
+    "Limits": {
+      "type": "object",
+      "properties": {
+        "maxChunk": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "maxPollBytes": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "maxPollWait": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "maxStreams": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "maxChunk",
+        "maxPollBytes",
+        "maxStreams",
+        "maxPollWait"
+      ]
+    }
+  }
+}

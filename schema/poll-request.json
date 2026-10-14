@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PollRequest",
+  "description": "`POST /v1/device/poll`",
+  "type": "object",
+  "properties": {
+    "ack": {
+      "description": "Every event with `seq <= ack` has been received and will not be resent.",
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "epoch": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "wait": {
+      "description": "Seconds to wait when no event is ready, at most `limits.max_poll_wait`.",
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "epoch",
+    "ack",
+    "wait"
+  ]
+}

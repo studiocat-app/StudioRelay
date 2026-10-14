@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PollResponse",
+  "type": "object",
+  "properties": {
+    "epoch": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Event"
+      }
+    }
+  },
+  "required": [
+    "epoch",
+    "events"
+  ],
+  "$defs": {
+    "Event": {
+      "description": "An event pulled by the Mac. `seq` increases by one per event within an\nepoch; unacknowledged events are sent again on the next poll.",
+      "type": "object",
+      "properties": {
+        "seq": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        }
+      },
+      "oneOf": [
+        {
+          "description": "A client sent an HTTP request (self-hosted mode).",
+          "type": "object",
+          "properties": {
+            "deadlineMs": {
+              "description": "Unix milliseconds after which the relay answers the client itself.",
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0
+            },
+            "headers": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "method": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            },
+            "query": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "streamId": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            },
+            "type": {
+              "type": "string",
+              "const": "http.open"
+            }
+          },
+          "required": [
+            "type",
+            "streamId",
+            "method",
+            "path",
+            "headers",
+            "deadlineMs"
+          ]
+        },
+        {
+          "description": "A client opened a TLS connection (hosted mode).",
+          "type": "object",
+          "properties": {
+            "sni": {
+              "type": "string"
+            },
+            "streamId": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            },
+            "type": {
+              "type": "string",
+              "const": "tcp.open"
+            }
+          },
+          "required": [
+            "type",
+            "streamId",
+            "sni"
+          ]
+        },
+        {
+          "description": "Request body bytes or TLS bytes, base64.",
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "string"
+            },
+            "offset": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0
+            },
+            "streamId": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            },
+            "type": {
+              "type": "string",
+              "const": "data"
+            }
+          },
+          "required": [
+            "type",
+            "streamId",
+            "offset",
+            "data"
+          ]
+        },
+        {
+          "description": "The client finished sending.",
+          "type": "object",
+          "properties": {
+            "streamId": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            },
+            "type": {
+              "type": "string",
+              "const": "end"
+            }
+          },
+          "required": [
+            "type",
+            "streamId"
+          ]
+        },
+        {
+          "description": "The stream was aborted (client gone, deadline passed).",
+          "type": "object",
+          "properties": {
+            "code": {
+              "$ref": "#/$defs/ResetCode"
+            },
+            "streamId": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            },
+            "type": {
+              "type": "string",
+              "const": "reset"
+            }
+          },
+          "required": [
+            "type",
+            "streamId",
+            "code"
+          ]
+        },
+        {
+          "description": "A rate limit is in effect; shown to the user, nothing to do.",
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "string"
+            },
+            "retryAfterMs": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0
+            },
+            "type": {
+              "type": "string",
+              "const": "throttle"
+            }
+          },
+          "required": [
+            "type",
+            "limit",
+            "retryAfterMs"
+          ]
+        }
+      ],
+      "required": [
+        "seq"
+      ]
+    },
+    "ResetCode": {
+      "type": "string",
+      "enum": [
+        "client_gone",
+        "deadline_exceeded",
+        "too_large",
+        "refused",
+        "internal"
+      ]
+    }
+  }
+}

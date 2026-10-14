@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RegisterResponse",
+  "description": "The device credential. The relay keeps only a hash of `device_secret`.",
+  "type": "object",
+  "properties": {
+    "deviceId": {
+      "type": "string"
+    },
+    "deviceSecret": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "deviceId",
+    "deviceSecret"
+  ]
+}

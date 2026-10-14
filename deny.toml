@@ -1,0 +1,8 @@
+[licenses]
+allow = ["Apache-2.0", "MIT", "BSD-3-Clause", "Unicode-3.0", "ISC"]
+
+[advisories]
+yanked = "deny"
+
+[bans]
+multiple-versions = "warn"

@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "name": "unacknowledged events are delivered again",
+      "steps": [
+        {"op": "hello", "epoch": 1},
+        {"op": "openHttp", "deadlineMs": 9999999999999, "expectStream": 1},
+        {"op": "clientData", "stream": 1, "len": 2, "data": "aGk="},
+        {"op": "poll", "epoch": 1, "ack": 0, "expectSeqs": [1, 2]},
+        {"op": "poll", "epoch": 1, "ack": 0, "expectSeqs": [1, 2]},
+        {"op": "poll", "epoch": 1, "ack": 1, "expectSeqs": [2]},
+        {"op": "poll", "epoch": 1, "ack": 2, "expectSeqs": []}
+      ]
+    },
+    {
+      "name": "requests with an old epoch are refused",
+      "steps": [
+        {"op": "hello", "epoch": 2},
+        {"op": "poll", "epoch": 1, "ack": 0, "expectError": "epoch_expired"},
+        {"op": "deviceData", "epoch": 1, "stream": 1, "offset": 0, "data": "aGk=", "expectError": "epoch_expired"}
+      ]
+    },
+    {
+      "name": "retried sends are deduplicated by offset",
+      "steps": [
+        {"op": "hello", "epoch": 1},
+        {"op": "openHttp", "deadlineMs": 9999999999999, "expectStream": 1},
+        {"op": "deviceData", "epoch": 1, "stream": 1, "offset": 0, "data": "aGVsbG8=", "expectAccepted": "aGVsbG8="},
+        {"op": "deviceData", "epoch": 1, "stream": 1, "offset": 0, "data": "aGVsbG8=", "expectAccepted": ""},
+        {"op": "deviceData", "epoch": 1, "stream": 1, "offset": 9, "data": "eA==", "expectReject": "offset_gap"},
+        {"op": "deviceData", "epoch": 1, "stream": 7, "offset": 0, "data": "eA==", "expectReject": "unknown_stream"}
+      ]
+    },
+    {
+      "name": "a new epoch never replays earlier requests",
+      "steps": [
+        {"op": "hello", "epoch": 1},
+        {"op": "openHttp", "deadlineMs": 9999999999999, "expectStream": 1},
+        {"op": "poll", "epoch": 1, "ack": 0, "expectSeqs": [1]},
+        {"op": "openHttp", "deadlineMs": 9999999999999, "expectStream": 2},
+        {"op": "hello", "epoch": 2, "expectEnded": {"1": "outcome_unknown", "2": "not_delivered"}},
+        {"op": "poll", "epoch": 2, "ack": 0, "expectSeqs": []}
+      ]
+    },
+    {
+      "name": "queued requests expire at their deadline",
+      "steps": [
+        {"op": "hello", "epoch": 1},
+        {"op": "openHttp", "deadlineMs": 1000, "expectStream": 1},
+        {"op": "expire", "nowMs": 999, "expectExpired": []},
+        {"op": "expire", "nowMs": 1000, "expectExpired": [1]}
+      ]
+    }
+  ]
+}
