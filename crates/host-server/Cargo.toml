@@ -1,0 +1,21 @@
+[package]
+name = "host-server"
+description = "StudioRelay native host: SNI passthrough for the hosted relay."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[[bin]]
+name = "studiorelay-server"
+path = "src/main.rs"
+
+[dependencies]
+relay-core = { path = "../relay-core" }
+relay-license = { path = "../relay-license" }
+relay-protocol = { path = "../relay-protocol" }
+relay-sni = { path = "../relay-sni" }

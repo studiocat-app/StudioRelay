@@ -1,0 +1,18 @@
+[package]
+name = "relay-core"
+description = "StudioRelay core: device sessions, streams, delivery and rate limits, without I/O."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+relay-protocol = { path = "../relay-protocol" }
+
+[dev-dependencies]
+base64 = "0.22"
+serde_json = "1"

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SendResponse",
+  "type": "object",
+  "properties": {
+    "epoch": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "rejected": {
+      "description": "Indexes into `frames` that were not accepted, with the reason.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Rejected"
+      }
+    }
+  },
+  "required": [
+    "epoch",
+    "rejected"
+  ],
+  "$defs": {
+    "RejectCode": {
+      "type": "string",
+      "enum": [
+        "unknown_stream",
+        "offset_gap",
+        "too_large",
+        "not_allowed"
+      ]
+    },
+    "Rejected": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/RejectCode"
+        },
+        "index": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "index",
+        "code"
+      ]
+    }
+  }
+}

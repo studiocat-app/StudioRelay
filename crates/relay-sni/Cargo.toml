@@ -1,0 +1,11 @@
+[package]
+name = "relay-sni"
+description = "Reads the server name from a TLS ClientHello without ending TLS."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
